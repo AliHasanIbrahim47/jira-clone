@@ -1,8 +1,7 @@
-import { useEffect } from "react";
-import { Link, useRouter } from "@tanstack/react-router";
 import { useQueryErrorResetBoundary } from "@tanstack/react-query";
-
+import { Link, useRouter } from "@tanstack/react-router";
 import { AlertTriangleIcon } from "lucide-react";
+import { useEffect } from "react";
 
 import {
   Accordion,
@@ -46,23 +45,25 @@ export function ErrorComponent({ error }: { error: Error }) {
           <Button className="w-full" variant="outline">
             <Link to="/">Return to homepage</Link>
           </Button>
-          {isDev ? (
-            <Accordion className="w-full">
-              <AccordionItem value="error-details">
-                <AccordionTrigger>View error details</AccordionTrigger>
-                <AccordionContent>
-                  <div className="rounded-md bg-muted p-4">
-                    <h3 className="mb-2 font-semibold">Error Message:</h3>
-                    <p className="mb-4 text-sm">{error.message}</p>
-                    <h3 className="mb-2 font-semibold">Stack Trace:</h3>
-                    <pre className="overflow-x-auto whitespace-pre-wrap text-xs">
-                      {error.stack}
-                    </pre>
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-            </Accordion>
-          ) : null}
+          {isDev
+            ? (
+                <Accordion className="w-full">
+                  <AccordionItem value="error-details">
+                    <AccordionTrigger>View error details</AccordionTrigger>
+                    <AccordionContent>
+                      <div className="rounded-md bg-muted p-4">
+                        <h3 className="mb-2 font-semibold">Error Message:</h3>
+                        <p className="mb-4 text-sm">{error.message}</p>
+                        <h3 className="mb-2 font-semibold">Stack Trace:</h3>
+                        <pre className="overflow-x-auto whitespace-pre-wrap text-xs">
+                          {error.stack}
+                        </pre>
+                      </div>
+                    </AccordionContent>
+                  </AccordionItem>
+                </Accordion>
+              )
+            : null}
         </div>
       </div>
     </div>

@@ -1,12 +1,11 @@
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { createRouter, RouterProvider } from "@tanstack/react-router";
+import { Loader2Icon } from "lucide-react";
 import ReactDOM from "react-dom/client";
 
-import { NotFound } from "./components/not-found";
 import { ErrorComponent } from "./components/error-component";
+import { NotFound } from "./components/not-found";
 import { routeTree } from "./routeTree.gen";
-import { Loader2Icon } from "lucide-react";
-
 import "./globals.css";
 
 const queryClient = new QueryClient();
@@ -26,7 +25,7 @@ const router = createRouter({
         Loading...
       </p>
     </div>
-  )
+  ),
 });
 
 // Register things for typesafety

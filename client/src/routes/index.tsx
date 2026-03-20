@@ -1,8 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
-import { getTasks } from "@/lib/api";
-import { Checkbox } from "@/components/ui/checkbox";
+
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
+import { getTasks } from "@/lib/api";
 
 export const Route = createFileRoute("/")({
   component: HomeComponent,
@@ -24,7 +25,7 @@ function HomeComponent() {
         <Button variant="outline">outline</Button>
         <Button variant="teritary">teritary</Button>
       </div>
-      {data?.map((task) => (
+      {data?.map(task => (
         <div key={task.id} className="flex items-center gap-2">
           <h3>{task.name}</h3>
           <Checkbox defaultChecked={task.done} />
