@@ -13,7 +13,9 @@ export default defineConfig({
     react(),
   ],
   resolve: {
+    dedupe: ["zod"],
     alias: {
+      "~": path.resolve(__dirname, "../server"),
       "@/shared": path.resolve(__dirname, "../shared"),
       "@": path.resolve(__dirname, "./src"),
     },

@@ -1,25 +1,36 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Link } from "@tanstack/react-router";
+import { Link, useRouter } from "@tanstack/react-router";
 import { Controller, useForm } from "react-hook-form";
 import { FaGithub } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
-import { z } from "zod";
+import type { z } from "zod";
 
 import { DottedSeparator } from "@/components/dotted-separator";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Field, FieldError } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { signUpSchema } from "~/db/schema";
+import { postSignUp } from "@/lib/api";
+import { useMutation } from "@tanstack/react-query";
+import { toast } from "sonner";
 
 export function SignUpCard() {
-  const formSchema = z.object({
-    name: z.string().min(1, { message: "Name is required" }),
-    email: z.string().email({ message: "Invalid email address" }),
-    password: z.string().min(8, { message: "Password must be at least 8 characters" }),
+  const router = useRouter();
+
+  const { mutateAsync: signUp } = useMutation({
+    mutationFn: (data: z.infer<typeof signUpSchema>) => postSignUp(data),
+    onSuccess: (data) => {
+      toast.success(`Welcome ${data.name}!`);
+      router.navigate({ to: "/" });
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
   });
 
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema),
+  const form = useForm<z.infer<typeof signUpSchema>>({
+    resolver: zodResolver(signUpSchema),
     defaultValues: {
       name: "",
       email: "",
@@ -27,8 +38,8 @@ export function SignUpCard() {
     },
   });
 
-  const onSubmit = (values: z.infer<typeof formSchema>) => {
-    console.log(values);
+  const onSubmit = (values: z.infer<typeof signUpSchema>) => {
+    signUp(values);
   };
 
   return (
