@@ -1,8 +1,9 @@
+import type { z } from "zod";
+
 import { hc } from "hono/client";
 
 import type { AppType } from "@/shared/types";
-import { signInSchema, signUpSchema } from "~/db/schema";
-import type { z } from "zod";
+import type { signInSchema, signUpSchema } from "~/db/schema";
 
 const client = hc<AppType>("http://localhost:9999/");
 

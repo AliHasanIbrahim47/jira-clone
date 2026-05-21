@@ -1,20 +1,18 @@
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Link } from "@tanstack/react-router";
-import { Controller, useForm } from "react-hook-form";
-import { FaGithub } from "react-icons/fa";
-import { FcGoogle } from "react-icons/fc";
 import type { z } from "zod";
+
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
+import { Link, useRouter } from "@tanstack/react-router";
+import { Controller, useForm } from "react-hook-form";
+import { toast } from "sonner";
 
 import { DottedSeparator } from "@/components/dotted-separator";
 import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Field, FieldError } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { signInSchema } from "~/db/schema";
-import { useMutation } from "@tanstack/react-query";
 import { postSignIn } from "@/lib/api";
-import { useRouter } from "@tanstack/react-router";
+import { signInSchema } from "~/db/schema";
 
 export function SignInCard() {
   const router = useRouter();

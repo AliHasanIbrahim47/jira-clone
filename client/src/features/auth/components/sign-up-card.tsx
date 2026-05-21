@@ -1,19 +1,18 @@
+import type { z } from "zod";
+
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
 import { Link, useRouter } from "@tanstack/react-router";
 import { Controller, useForm } from "react-hook-form";
-import { FaGithub } from "react-icons/fa";
-import { FcGoogle } from "react-icons/fc";
-import type { z } from "zod";
+import { toast } from "sonner";
 
 import { DottedSeparator } from "@/components/dotted-separator";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Field, FieldError } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { signUpSchema } from "~/db/schema";
 import { postSignUp } from "@/lib/api";
-import { useMutation } from "@tanstack/react-query";
-import { toast } from "sonner";
+import { signUpSchema } from "~/db/schema";
 
 export function SignUpCard() {
   const router = useRouter();
