@@ -131,7 +131,7 @@ export function SignUpCard() {
         <DottedSeparator />
       </div>
 
-      <CardContent className="p-7 flex flex-col gap-y-4">
+      {/* <CardContent className="p-7 flex flex-col gap-y-4">
         <Button variant="secondary" size="lg" className="w-full" disabled={false}>
           <FcGoogle className="size-5 mr-2" />
           {" "}
@@ -142,11 +142,11 @@ export function SignUpCard() {
           {" "}
           Sign up with Github
         </Button>
-      </CardContent>
+      </CardContent> */}
 
-      <div className="px-7">
+      {/* <div className="px-7">
         <DottedSeparator />
-      </div>
+      </div> */}
 
       <CardContent className="p-7 flex items-center justify-center">
         <p>
