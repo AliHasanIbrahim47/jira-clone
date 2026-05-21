@@ -1,113 +1,135 @@
-# Hono Open API Starter
+# Jira Clone
 
-A starter template for building fully documented type-safe JSON APIs with Hono and Open API.
+Full-stack playground for a Jira-style app: **Hono** REST API with **OpenAPI** docs, **Drizzle ORM**, and a **React (Vite)** SPA using **TanStack Router**, **TanStack Query**, and **Tailwind**.
 
-> A new version of drizzle was released since the video showing this starter was made. See [this commit](https://github.com/w3cj/hono-open-api-starter/commit/92525ff84fb2a247c8245cc889b2320d7b3b6e2c) for the changes required to use drizzle v0.35+
+The API is wired to the SPA via **typed Hono RPC** (`hono/client` + shared `AppType`).
 
-> A new version of zod was released since the video showing this starter was made. See [this commit](https://github.com/w3cj/hono-open-api-starter/commit/f7f88dfc40cb7bda53f8729983d8308c2d6c780b) for the changes required to use zod v4.
+---
 
-> For a cloudflare specific template, see the [cloudflare branch](https://github.com/w3cj/hono-open-api-starter/tree/cloudflare) on this repo
+## Repository layout
 
-> For other deployment examples see the [hono-node-deployment-examples](https://github.com/w3cj/hono-node-deployment-examples) repo
+| Path | Purpose |
+| --- | --- |
+| [`server/`](./server/) | HTTP API (`@hono/node-server`), routes, Drizzle schemas, migrations |
+| [`client/`](./client/) | Vite + React SPA (port **3001** by default) |
+| [`shared/`](./shared/) | Thin re-export of [`AppType`](./server/app.ts) for client imports |
 
-- [Hono Open API Starter](#hono-open-api-starter)
-  - [Included](#included)
-  - [Setup](#setup)
-  - [Code Tour](#code-tour)
-  - [Endpoints](#endpoints)
-  - [References](#references)
+This repo uses **two** Node projects: dependencies are installed separately at the **root** (API) and under **`client/`** (SPA).
 
-## Included
+---
 
-- Structured logging with [pino](https://getpino.io/) / [hono-pino](https://www.npmjs.com/package/hono-pino)
-- Documented / type-safe routes with [@hono/zod-openapi](https://github.com/honojs/middleware/tree/main/packages/zod-openapi)
-- Interactive API documentation with [scalar](https://scalar.com/#api-docs) / [@scalar/hono-api-reference](https://github.com/scalar/scalar/tree/main/packages/hono-api-reference)
-- Convenience methods / helpers to reduce boilerplate with [stoker](https://www.npmjs.com/package/stoker)
-- Type-safe schemas and environment variables with [zod](https://zod.dev/)
-- Single source of truth database schemas with [drizzle](https://orm.drizzle.team/docs/overview) and [drizzle-zod](https://orm.drizzle.team/docs/zod)
-- Testing with [vitest](https://vitest.dev/)
-- Sensible editor, formatting and linting settings with [@antfu/eslint-config](https://github.com/antfu/eslint-config)
+## Quick start
 
-## Setup
+### 1. Environment (API root)
 
-Clone this template without git history
-
-```sh
-npx degit w3cj/hono-open-api-starter my-api
-cd my-api
-```
-
-Create `.env` file
+Copy the example env and edit if needed:
 
 ```sh
 cp .env.example .env
 ```
 
-Install dependencies
+| Variable | Notes |
+| --- | --- |
+| `DATABASE_URL` | Dev default `file:dev.db` (relative to project root once pushed) |
+| `DATABASE_AUTH_TOKEN` | Optional in development; required when `NODE_ENV=production` |
+| `PORT` | API listens here (default **9999**) |
+| `LOG_LEVEL` | Pino levels: `fatal` … `trace`, or `silent` |
+
+### 2. Install dependencies
 
 ```sh
-pnpm install
+# API (repository root)
+bun install
+# or: npm install / pnpm install
+
+# SPA
+cd client && bun install
 ```
 
-Create sqlite db / push schema
+### 3. Database schema
+
+From the repository root ([`drizzle.config.ts`](./drizzle.config.ts) loads [`server/env.ts`](./server/env.ts)):
 
 ```sh
-pnpm drizzle-kit push
+bun run drizzle:push
+# or: npm run drizzle:push
 ```
 
-Run
+Other Drizzle helpers: `drizzle:generate`, `drizzle:migrate`, `drizzle:studio`.
+
+### 4. Run in development
+
+You need **two** processes:
 
 ```sh
-pnpm dev
+# Terminal 1 — API (default http://localhost:9999)
+bun dev
 ```
-
-Lint
 
 ```sh
-pnpm lint
+# Terminal 2 — SPA (default http://localhost:3001)
+cd client && bun dev
 ```
 
-Test
+The client RPC client is aimed at **`http://localhost:9999/`** (see [`client/src/lib/api.ts`](./client/src/lib/api.ts)).
 
-```sh
-pnpm test
-```
+---
 
-## Code Tour
+## Scripts (repository root)
 
-Base hono app exported from [app.ts](./server/app.ts). Local development uses [@hono/node-server](https://hono.dev/docs/getting-started/nodejs) defined in [index.ts](./server/index.ts) - update this file or create a new entry point to use your preferred runtime.
+| Script | Command |
+| --- | --- |
+| Dev server | `bun dev` |
+| Production build | `bun run build` then `bun run start` |
+| Typecheck | `bun run typecheck` |
+| Lint API | `bun run lint:server` |
+| Lint SPA | `bun run lint:client` |
+| Tests | `bun run test` |
 
-Typesafe env defined in [env.ts](./server/env.ts) - add any other required environment variables here. The application will not start if any required environment variables are missing
+Client-only: `cd client && bun run build` · `bun run typecheck`.
 
-See [server/routes/tasks](./server/routes/tasks/) for an example Open API group. Copy this folder / use as an example for your route groups.
+---
 
-- Router created in [tasks.index.ts](./server/routes/tasks/tasks.index.ts)
-- Route definitions defined in [tasks.routes.ts](./server/routes/tasks/tasks.routes.ts)
-- Hono request handlers defined in [tasks.handlers.ts](./server/routes/tasks/tasks.handlers.ts)
-- Group unit tests defined in [tasks.test.ts](./server/routes/tasks/tasks.test.ts)
+## API surface
 
-All app routes are grouped together and exported into single type as `AppType` in [app.ts](./server/app.ts) for use in [RPC / hono/client](https://hono.dev/docs/guides/rpc).
+Interactive docs (**Scalar**) and the OpenAPI JSON live on the API process:
 
-## Endpoints
+| URL | Description |
+| --- | --- |
+| `/doc` | OpenAPI 3.0 JSON |
+| `/reference` | Scalar UI |
 
-| Path               | Description              |
-| ------------------ | ------------------------ |
-| GET /doc           | Open API Specification   |
-| GET /reference     | Scalar API Documentation |
-| GET /tasks         | List all tasks           |
-| POST /tasks        | Create a task            |
-| GET /tasks/{id}    | Get one task by id       |
-| PATCH /tasks/{id}  | Patch one task by id     |
-| DELETE /tasks/{id} | Delete one task by id    |
+Representative endpoints (tasks + auth evolve with the app):
 
-## References
+| Method & path | Description |
+| --- | --- |
+| `GET /tasks` | List tasks |
+| `POST /tasks` | Create task |
+| `GET /tasks/:id` | Get task |
+| `PATCH /tasks/:id` | Update task |
+| `DELETE /tasks/:id` | Delete task |
+| `POST /auth/sign-up` | Register (duplicate email → **409** with `{ message }`) |
+| `POST /auth/sign-in` | Sign in |
 
-- [What is Open API?](https://swagger.io/docs/specification/v3_0/about/)
-- [Hono](https://hono.dev/)
-  - [Zod OpenAPI Example](https://hono.dev/examples/zod-openapi)
-  - [Testing](https://hono.dev/docs/guides/testing)
-  - [Testing Helper](https://hono.dev/docs/helpers/testing)
-- [@hono/zod-openapi](https://github.com/honojs/middleware/tree/main/packages/zod-openapi)
-- [Scalar Documentation](https://github.com/scalar/scalar/tree/main/?tab=readme-ov-file#documentation)
-  - [Themes / Layout](https://github.com/scalar/scalar/blob/main/documentation/themes.md)
-  - [Configuration](https://github.com/scalar/scalar/blob/main/documentation/configuration.md)
+---
+
+## Code tour
+
+- **App & types**: [`server/app.ts`](./server/app.ts) composes routers and exports `AppType` for the client RPC client.
+- **Env validation**: [`server/env.ts`](./server/env.ts) — failing validation exits before the server binds.
+- **Route pattern**: Example group under [`server/routes/tasks/`](./server/routes/tasks/) — `.routes.ts` (OpenAPI + Zod), `.handlers.ts` (logic), `.index.ts` (wire-up). Auth mirrors this under [`server/routes/auth/`](./server/routes/auth/).
+- **Client aliases**: `@/` → `client/src`, `~/` → `server` (see [`client/vite.config.ts`](./client/vite.config.ts)).
+
+---
+
+## Acknowledgements
+
+Starter patterns and toolchain ideas trace back to the [hono-open-api-starter](https://github.com/w3cj/hono-open-api-starter) ecosystem (**Hono**, **@hono/zod-openapi**, **Scalar**, **Stoker**, **Drizzle**).
+
+Further reading:
+
+- [Hono](https://hono.dev/) · [Zod OpenAPI middleware](https://github.com/honojs/middleware/tree/main/packages/zod-openapi)
+- [OpenAPI overview](https://swagger.io/docs/specification/v3_0/about/)
+- [TanStack Router](https://tanstack.com/router/latest) · [TanStack Query](https://tanstack.com/query/latest)
+- [Scalar for Hono](https://github.com/scalar/scalar/tree/main/packages/hono-api-reference)
+- [Drizzle ORM](https://orm.drizzle.team/docs/overview)
