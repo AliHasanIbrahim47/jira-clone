@@ -4,7 +4,7 @@ import { jsonContent, jsonContentRequired } from "stoker/openapi/helpers";
 import { createErrorSchema } from "stoker/openapi/schemas";
 
 import { selectUsersSchema, signInSchema, signUpSchema } from "~/db/schema";
-import { notFoundSchema } from "~/lib/constants";
+import { conflictSchema, notFoundSchema } from "~/lib/constants";
 
 const tags = ["Auth"];
 
@@ -52,6 +52,10 @@ export const signUp = createRoute({
     [HttpStatusCodes.OK]: jsonContent(
       selectUsersSchema,
       "The created user",
+    ),
+    [HttpStatusCodes.CONFLICT]: jsonContent(
+      conflictSchema,
+      "Email already registered",
     ),
     [HttpStatusCodes.UNPROCESSABLE_ENTITY]: jsonContent(
       createErrorSchema(signUpSchema),
